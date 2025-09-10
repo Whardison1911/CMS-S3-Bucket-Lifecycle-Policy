@@ -1,7 +1,3 @@
-Here you go—same structure and tone as your KMS repo README, tailored to the EPOR DEV S3 lifecycle project.
-
----
-
 # Terraform EPOR DEV S3 Lifecycle Repository
 
 ## 📋 Overview
