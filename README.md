@@ -298,3 +298,17 @@ This repository is provided for educational purposes. Please review and test tho
 
 *Note: Remember to update `module/locals.tf`, `variables.tf`, and your **logs bucket name** before deployment.*
 
+## 🧪 Proof of Concept (POC)
+
+A runnable example is provided in `epor-dev-s3-lifecycle/poc`.
+
+```bash
+cd epor-dev-s3-lifecycle/poc
+terraform init
+cp terraform.tfvars.example terraform.tfvars
+# edit terraform.tfvars with your values
+terraform plan
+terraform apply
+```
+
+The POC uses minimal inputs (region, logs bucket, KMS key ARN, suffix, and basic tags) and deploys the S3 buckets, lifecycle configuration, bucket policies, and AWS Config rules (including replication and KMS key rotation).
