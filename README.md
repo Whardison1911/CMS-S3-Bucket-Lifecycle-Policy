@@ -14,6 +14,13 @@ This educational repository provides a comprehensive set of Terraform configurat
 * **🧭 Continuous Compliance**: AWS Config managed rules + a custom rule to validate dataset-specific retention
 * **⚙️ Centralized Configuration**: Terraform locals define datasets, identifiers (`hdt`, `haa`), and transitions
 
+
+## 🔄 New Checks Added
+
+- **Backup/Replication**: Enforced with AWS Config `S3_BUCKET_REPLICATION_ENABLED`.
+- **KMS Key Rotation**: Enforced with AWS Config `KMS_KEY_ROTATION_ENABLED` (rotate at least annually).
+- **Historical Data**: Placeholder definition surfaced by the custom rule annotation (`HISTORICAL_DATA_DEFINITION`).
+- **Data Category Tags**: Optional, disabled by default; enable via `CHECK_DATA_CATEGORY_TAGS` and configure `DATA_CATEGORY_TAG_KEYS`.
 ## 🏗️ Repository Structure
 
 ```
