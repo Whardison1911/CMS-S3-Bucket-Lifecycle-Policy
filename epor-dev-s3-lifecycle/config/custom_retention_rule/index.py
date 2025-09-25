@@ -8,7 +8,7 @@
 #   - Last updated: 2025-09-17
 # -----------------------------------------------------------------------------
 
-import boto3, json, os
+import boto3, json, os  # pyright: ignore[reportMissingImports]
 
 s3 = boto3.client("s3")
 config = boto3.client("config")
@@ -38,6 +38,24 @@ def check_bucket_retention(bucket_name, expected_days):
             return True, "Matching expiration and noncurrent retention"
     return False, "No matching rule found"
 
+def check_optional_data_category_tags(bucket_name):
+    # Disabled by default via env CHECK_DATA_CATEGORY_TAGS
+    enabled = os.environ.get("CHECK_DATA_CATEGORY_TAGS", "false").lower() == "true"
+    if not enabled:
+        return None
+    tag_keys_csv = os.environ.get("DATA_CATEGORY_TAG_KEYS", "")
+    tag_keys = [k.strip() for k in tag_keys_csv.split(",") if k.strip()]
+    if not tag_keys:
+        return "Data category check enabled but no tag keys configured"
+    try:
+        tags = s3.get_bucket_tagging(Bucket=bucket_name).get("TagSet", [])
+    except Exception as e:
+        return f"Unable to read tags: {str(e)[:80]}"
+    present = {t.get("Key"): t.get("Value") for t in tags if t.get("Key") in tag_keys}
+    if not present:
+        return "Missing data category tags"
+    return "Data category tags present: " + ", ".join(f"{k}={v}" for k, v in present.items())
+
 def lambda_handler(event, context):
     invoking_event = json.loads(event["invokingEvent"])
     ci = invoking_event.get("configurationItem")
@@ -60,6 +78,15 @@ def lambda_handler(event, context):
             ok, note = check_bucket_retention(resource_id, expected)
             compliance_type = "COMPLIANT" if ok else "NON_COMPLIANT"
             annotation = note
+        # Append informational notes (non-enforcing) for historical data definition and optional tag checks
+        hist_def = os.environ.get("HISTORICAL_DATA_DEFINITION")
+        if hist_def:
+            suffix = f" | HistoricalDataDef: {hist_def[:120]}"
+            annotation = (annotation + suffix) if annotation else suffix
+        dc_note = check_optional_data_category_tags(resource_id)
+        if dc_note:
+            suffix = f" | TagCheck: {dc_note[:120]}"
+            annotation = (annotation + suffix) if annotation else suffix
 
     eval_result = {
         "ComplianceResourceType": resource_type,

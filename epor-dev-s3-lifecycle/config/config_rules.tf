@@ -100,3 +100,24 @@ resource "aws_config_config_rule" "logging" {
 module "custom_retention_rule" {
   source = "./custom_retention_rule"
 }
+
+# Backup / replication enabled (supports Data Availability)
+resource "aws_config_config_rule" "replication_enabled" {
+  name = "s3-bucket-replication-enabled"
+  scope {
+    compliance_resource_types = ["AWS::S3::Bucket"]
+  }
+  source {
+    owner             = "AWS"
+    source_identifier = "S3_BUCKET_REPLICATION_ENABLED"
+  }
+}
+
+# KMS key rotation enabled (crypto key lifecycle)
+resource "aws_config_config_rule" "kms_key_rotation_enabled" {
+  name = "kms-key-rotation-enabled"
+  source {
+    owner             = "AWS"
+    source_identifier = "KMS_KEY_ROTATION_ENABLED"
+  }
+}
