@@ -77,6 +77,14 @@ resource "aws_lambda_function" "retention_rule" {
       EXPECTED = jsonencode({
         APS = 1, OnePILov = 30, eSMD = 30, MDP = 30, PreclusionList = 90, HETS = 180
       })
+      # Generic profiles decouple project names from retention days
+      RETENTION_PROFILES = jsonencode({
+        SHORT = 1, STANDARD = 30, EXTENDED = 90, LONG = 180
+      })
+      # Map datasets to generic profiles (override EXPECTED as the new source of truth)
+      DATASET_TO_PROFILE = jsonencode({
+        APS = "SHORT", ONEPILOV = "STANDARD", ESMD = "STANDARD", MDP = "STANDARD", PRECLUSIONLIST = "EXTENDED", HETS = "LONG"
+      })
       # Placeholder: free-text description of what qualifies as "historical data" in this context
       HISTORICAL_DATA_DEFINITION = "TBD: Define what constitutes historical data for retention exceptions"
       # Scaffold: when true, enable Data Category tag checks inside the Lambda (disabled until categories are defined)

@@ -312,3 +312,12 @@ terraform apply
 ```
 
 The POC uses minimal inputs (region, logs bucket, KMS key ARN, suffix, and basic tags) and deploys the S3 buckets, lifecycle configuration, bucket policies, and AWS Config rules (including replication and KMS key rotation).
+
+## 📦 Generic Retention Profiles
+
+Use environment variables to map datasets to generic profiles, decoupling names from days:
+
+- `RETENTION_PROFILES`: JSON like `{ "SHORT": 1, "STANDARD": 30, "EXTENDED": 90, "LONG": 180 }`
+- `DATASET_TO_PROFILE`: JSON mapping datasets (uppercased) to profile names
+
+If a dataset maps to a profile, that profile determines expected retention. Otherwise, the legacy `EXPECTED` map is used.

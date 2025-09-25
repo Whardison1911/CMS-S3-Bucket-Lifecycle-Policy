@@ -14,11 +14,16 @@ s3 = boto3.client("s3")
 config = boto3.client("config")
 
 def get_expected_days(bucket_name):
-    # Expect mapping by dataset parsed from bucket naming: epor-dev-<dataset>-<id>-<suffix>
+    # New generic profile support:
+    # - RETENTION_PROFILES: { "SHORT": 1, "STANDARD": 30, "EXTENDED": 90, "LONG": 180 }
+    # - DATASET_TO_PROFILE: { "APS": "SHORT", "ONEPILOV": "STANDARD", ... }
+    profiles = json.loads(os.environ.get("RETENTION_PROFILES", "{}"))
+    dataset_to_profile = json.loads(os.environ.get("DATASET_TO_PROFILE", "{}"))
     expected_map = json.loads(os.environ.get("EXPECTED", "{}"))
     parts = bucket_name.split("-")
-    # epor-dev-<dataset>-<identifier>-<suffix>
     dataset = parts[2].upper() if len(parts) >= 5 else None
+    if dataset in dataset_to_profile and dataset_to_profile[dataset] in profiles:
+        return int(profiles[dataset_to_profile[dataset]])
     if dataset in expected_map:
         return int(expected_map[dataset])
     return None
