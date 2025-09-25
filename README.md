@@ -47,7 +47,7 @@ This educational repository provides a comprehensive set of Terraform configurat
 1. **Clone the repository**:
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Whardison1911/CMS-S3-Bucket-Lifecycle-Policy.git
    cd epor-dev-s3-lifecycle
    ```
 
