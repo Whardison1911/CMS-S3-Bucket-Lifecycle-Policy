@@ -1,0 +1,9 @@
+# Example values for POC
+region             = "us-east-1"
+logs_bucket_name   = "your-central-logs-bucket"
+kms_key_arn        = "arn:aws:kms:us-east-1:111122223333:key/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+suffix             = "001"
+owner              = "team-epor"
+business_unit      = "apps"
+cost_center        = "12345"
+data_classification= "Internal"
