@@ -44,6 +44,11 @@ resource "aws_iam_role_policy" "retention_lambda_policy" {
       },
       {
         Effect: "Allow",
+        Action: ["kms:DescribeKey", "kms:GetKeyRotationStatus"],
+        Resource: "*"
+      },
+      {
+        Effect: "Allow",
         Action: ["config:PutEvaluations"],
         Resource: "*"
       }
@@ -72,6 +77,12 @@ resource "aws_lambda_function" "retention_rule" {
       EXPECTED = jsonencode({
         APS = 1, OnePILov = 30, eSMD = 30, MDP = 30, PreclusionList = 90, HETS = 180
       })
+      # Placeholder: free-text description of what qualifies as "historical data" in this context
+      HISTORICAL_DATA_DEFINITION = "TBD: Define what constitutes historical data for retention exceptions"
+      # Scaffold: when true, enable Data Category tag checks inside the Lambda (disabled until categories are defined)
+      CHECK_DATA_CATEGORY_TAGS   = "false"
+      # Comma-separated tag keys to look for when CHECK_DATA_CATEGORY_TAGS = true
+      DATA_CATEGORY_TAG_KEYS     = "DataCategory,DataSensitivity"
     }
   }
 }
